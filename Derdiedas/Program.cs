@@ -8,11 +8,12 @@ namespace Derdiedas
 	{
 		public static void Main()
 		{
-            string[] wordList = File.ReadAllLines(@"C:\Users\zo7d\source\repos\Derdiedas\Derdiedas\wordlist.txt");
             // starting page asks for search or entry
             bool keepLooping = true;
             while (keepLooping)
             {
+                string[] wordList = File.ReadAllLines(@"C:\Users\zo7d\source\repos\Derdiedas\Derdiedas\wordlist.txt");
+
                 Console.WriteLine("Enter new word or look up existing entry");
                 string inputWord = Console.ReadLine().ToLower();
                 bool onlyLegitCharacters = true;
@@ -20,17 +21,18 @@ namespace Derdiedas
                 {
                     if (!"abcdefghijklmnopqrstuvwxyzäöüß".Contains(c))
                     {
-                        Console.WriteLine("Word can only contain the 26 letters of the latin alphabet and the 4 extra German letters");
+                        Console.WriteLine("Invalid entry. Was there a character excluded from the German alphabet?");
                         Console.WriteLine(Environment.NewLine);
                         onlyLegitCharacters = false;
                         break;
                     }
 
                 }
-                if (onlyLegitCharacters)
+                if (!onlyLegitCharacters)
                 {
-                    Console.WriteLine(inputWord);
+                    continue;
                 }
+                
 
                 bool alreadyInList = false;
                 foreach (var line in wordList)
@@ -43,30 +45,40 @@ namespace Derdiedas
                         break;
                     }
                 }
-                if (alreadyInList)
+                if (!alreadyInList)
                 {
+                    string newEntryForList = "";
                     Console.WriteLine("Input word is not in the list. To add, select from der, die, or das (1, 2, 3 or m, f, n)");
                     string genderInput = Console.ReadLine();
                     if (genderInput.Length == 1 && "123mfn".Contains(genderInput))
                     {
+                        if (genderInput == "1" || genderInput == "m")
+                        {
+                            newEntryForList = $"der {Char.ToUpper(inputWord[0])}{inputWord.Substring(1)}";
+                        }
 
+                        if (genderInput == "2" || genderInput == "f")
+                        {
+                            newEntryForList = $"die {Char.ToUpper(inputWord[0])}{inputWord.Substring(1)}";
+                        }
+
+                        if (genderInput == "3" || genderInput == "n")
+                        {
+                            newEntryForList = $"das {Char.ToUpper(inputWord[0])}{inputWord.Substring(1)}";
+                        }
                     }
                     else
                     {
                         Console.WriteLine("Invalid input." + Environment.NewLine);
                     }
-                    Char firstLetterToCapitalize = Char.ToUpper(inputWord[0]);
-
-                    File.AppendAllText(@"C:\Users\zo7d\source\repos\Derdiedas\Derdiedas\wordlist.txt", inputWord)
+                    File.AppendAllText(@"C:\Users\zo7d\source\repos\Derdiedas\Derdiedas\wordlist.txt", Environment.NewLine + newEntryForList);
                 }
 
 
             }
-			// display last search
-			// list of previously searched words?
-
-			// make a list into which Nouns will be fed 
-			// 
+			// TODO: display last search
+			// TODO: list of previously searched words?
+            // TODO: allow for multiple genders per noun (modernisation)
 		}
 	}
 }
